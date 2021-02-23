@@ -20,7 +20,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'justchatapp'
+    'channels',
+    'justchatapp',
 ]
 
 MIDDLEWARE = [
@@ -52,6 +53,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'justchat.wsgi.application'
+
 
 DATABASES = {
     'default': {
@@ -88,3 +90,15 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
+
+# channels
+ASGI_APPLICATION = 'justchat.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
