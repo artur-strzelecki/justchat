@@ -6,6 +6,16 @@ from django.contrib.auth.models import User
 
 
 class ChatConsumer(WebsocketConsumer):
+
+    def load_messages(self):
+        messages = PublicMessage.objects.filter(room=self.room).order_by('timestamp')
+
+        for message in messages:
+            self.send(text_data=json.dumps({
+                'message': message.content,
+            }))
+
+
     def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = 'chat_%s' % self.room_name
@@ -18,6 +28,7 @@ class ChatConsumer(WebsocketConsumer):
         )
 
         self.accept()
+        self.load_messages()
 
     def disconnect(self, close_code):
         # Leave room group
@@ -26,7 +37,7 @@ class ChatConsumer(WebsocketConsumer):
             self.channel_name
         )
 
-    # Receive message from WebSocket
+    # receive message from user
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
@@ -44,11 +55,12 @@ class ChatConsumer(WebsocketConsumer):
             }
         )
 
-    # Receive message from room group
+    # send message to textarea in template
     def chat_message(self, event):
         message = event['message']
 
-        # Send message to WebSocket
         self.send(text_data=json.dumps({
             'message': message,
         }))
+
+
