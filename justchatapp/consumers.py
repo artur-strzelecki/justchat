@@ -13,6 +13,7 @@ class ChatConsumer(WebsocketConsumer):
         for message in messages:
             self.send(text_data=json.dumps({
                 'message': message.content,
+                'author': message.author.username,
             }))
 
 
@@ -51,16 +52,19 @@ class ChatConsumer(WebsocketConsumer):
             self.room_group_name,
             {
                 'type': 'chat_message',
-                'message': message
+                'message': message,
+                'author': author
             }
         )
 
     # send message to textarea in template
     def chat_message(self, event):
         message = event['message']
+        author = event['author']
 
         self.send(text_data=json.dumps({
             'message': message,
+            'author': author
         }))
 
 

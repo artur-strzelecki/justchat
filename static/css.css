@@ -1,0 +1,17 @@
+.send_message {
+    margin-right: 10px;
+    border-radius: 22px;
+    background-color: #78e08f;
+    padding: 12px;
+    word-wrap: break-word;
+    max-width: 30%;
+}
+
+.receive_message {
+    margin-left: 10px;
+    border-radius: 22px;
+    background-color: #82ccdd;
+    padding: 12px;
+    word-wrap: break-word;
+    max-width: 30%;
+}
