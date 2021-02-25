@@ -7,3 +7,4 @@ justchat/__pycache__/
 justchatapp/__pycache__/
 staticfiles/
 .vscode/
+frontend/node_modules/
