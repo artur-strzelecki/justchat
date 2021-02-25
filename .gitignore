@@ -6,3 +6,4 @@ venv/
 justchat/__pycache__/
 justchatapp/__pycache__/
 staticfiles/
+.vscode/

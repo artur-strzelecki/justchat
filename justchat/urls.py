@@ -4,5 +4,6 @@ from django.conf.urls import include
 
 urlpatterns = [
     path('chat/', include('justchatapp.urls')),
+    path('', include('frontend.urls')),
     path('admin/', admin.site.urls),
 ]

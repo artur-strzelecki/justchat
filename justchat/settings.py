@@ -23,6 +23,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'channels',
     'justchatapp',
+    'rest_framework',
+    'frontend',
 ]
 
 MIDDLEWARE = [
