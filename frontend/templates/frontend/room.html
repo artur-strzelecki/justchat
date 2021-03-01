@@ -1,13 +1,11 @@
-{% extends "chat/base.html" %}
+{% extends "frontend/base.html" %}
 
 {% block title %} Chat {% endblock %}
 {% block content %}
-    <div style="width:70%; max-height: 600px;">
-        <div id="chat-log" style="background-color: blue; max-height: 500px; overflow: scroll;"> </div>
-        <input id="chat-message-input" type="text"><br>
-        <input id="chat-message-submit" type="button" value="Send">
+    <div id="chat" style="width:70%; max-height: 600px;">
         {{ room_name|json_script:"room-name" }}
     </div>
+    {% load static %}
 {% endblock %}
 
 {% block script %}

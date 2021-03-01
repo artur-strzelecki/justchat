@@ -10,12 +10,9 @@ class Room(models.Model):
 
 
 class PublicMessage(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.TextField(blank=False)
     content = models.TextField(blank=False)
     timestamp = models.DateTimeField(default=datetime.now)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
 
-    @staticmethod
-    def load_messages(room):
-        return PublicMessage.objects.filter(room=room).order_by('-timestamp')
 
