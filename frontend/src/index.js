@@ -7,26 +7,22 @@ import {
   Link,
   Redirect
 } from "react-router-dom";
+import Chat from './components/chat';
+import Room from './components/room';
 
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      room: null
-    }
-  }
-
-  componentDidMount() {
-    fetch('api/get_room_messages/1/')
-    .then(response => response.json())
-    .then(data => console.log(data));
-
-    console.log(this.props.room)
   }
 
   render() {
     return (
-      <div> hello chat </div>
+      <Router>
+        <Switch>
+          <Route exact path="/chat" component={Room} />
+          <Route path="/chat/:room_name" component={Chat}/>
+        </Switch>
+      </Router>
     );
   }
 }
