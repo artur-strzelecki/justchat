@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializers import SerializersPublicMessage
+from .serializers import SerializersPublicMessage, SerializersRoom
 from .models import PublicMessage, Room
 
 
@@ -21,5 +21,12 @@ def create_room_messages(request):
         serializer.save()
 
     return Response(serializer.data)
+
+@api_view(['GET'])
+def get_rooms(request):
+    rooms = Room.objects.all()
+    serializer = SerializersRoom(rooms, many=True)
+    return Response(serializer.data)
+
 ''' END API '''
 
