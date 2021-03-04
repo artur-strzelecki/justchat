@@ -13,9 +13,9 @@ class ChatConsumer(WebsocketConsumer):
         for message in messages:
             self.send(text_data=json.dumps({
                 'message': message.content,
-                'author': message.author.username,
+                'author': message.author,
+                'id': message.id,
             }))
-
 
     def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
@@ -43,9 +43,9 @@ class ChatConsumer(WebsocketConsumer):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
         author = text_data_json['author']
-        user = User.objects.filter(username=author)[0]
 
-        public_message = PublicMessage.objects.create(author=user, content=message, room=self.room)
+        public_message = PublicMessage.objects.create(author=author, content=message, room=self.room)
+        mess_id = public_message.id
         public_message.save()
 
         async_to_sync(self.channel_layer.group_send)(
@@ -53,7 +53,8 @@ class ChatConsumer(WebsocketConsumer):
             {
                 'type': 'chat_message',
                 'message': message,
-                'author': author
+                'author': author,
+                'id': mess_id,
             }
         )
 
@@ -61,10 +62,12 @@ class ChatConsumer(WebsocketConsumer):
     def chat_message(self, event):
         message = event['message']
         author = event['author']
+        mess_id = event['id']
 
         self.send(text_data=json.dumps({
             'message': message,
-            'author': author
+            'author': author,
+            'id': mess_id,
         }))
 
 

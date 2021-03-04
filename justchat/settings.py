@@ -24,7 +24,6 @@ INSTALLED_APPS = [
     'channels',
     'justchatapp',
     'rest_framework',
-    'frontend',
 ]
 
 MIDDLEWARE = [

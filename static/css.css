@@ -15,3 +15,23 @@
     word-wrap: break-word;
     max-width: 30%;
 }
+
+body {
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(47,40,43,1) 0%, rgba(71,90,94,1) 100%);
+}
+
+.cover-container {
+  max-width: 42em;
+}
+
+#nickname:focus {
+    border-color: #4b4d50;
+    box-shadow: 0 0 0 0.2rem rgba(223, 228, 234, 0.25);
+}
+
+#nickname {
+    max-width: 18em;
+    align-self: center;
+}
+
+
