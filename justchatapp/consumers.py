@@ -32,7 +32,15 @@ class ChatConsumer(WebsocketConsumer):
         self.load_messages()
 
     def disconnect(self, close_code):
-        # Leave room group
+        # send (nickname left the chat)
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name,
+            {
+                'type': 'chat_disconnect',
+                'nick': 'asjfbashj',
+            }
+        )  
+
         async_to_sync(self.channel_layer.group_discard)(
             self.room_group_name,
             self.channel_name
@@ -68,7 +76,6 @@ class ChatConsumer(WebsocketConsumer):
                     'nick': nick,
                 }
             )           
-        
 
     # send message to textarea in template
     def chat_message(self, event):
@@ -86,6 +93,13 @@ class ChatConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps({
             'type': 'chat_join',
             'nick': nick
-        }))       
+        }))    
+
+    def chat_disconnect(self, event):
+        nick = event['nick']
+        self.send(text_data=json.dumps({
+            'type': 'chat_disconnect',
+            'nick': nick
+        }))               
 
 

@@ -105,6 +105,16 @@
                     chat_div.appendChild(p); 
                 }
 
+                if (type === 'chat_disconnect')
+                {
+                    var p = document.createElement('p');
+                    p.className = "text-center text-muted";
+                    p.textContent = data.nick + ' left the chat!';
+                    var chat_div = document.getElementById('chat');
+                    chat_div.appendChild(p); 
+                }
+
+
                 chat_div.scrollTop =  chat_div.scrollHeight;
             };
 
