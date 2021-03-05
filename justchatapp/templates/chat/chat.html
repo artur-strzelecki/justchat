@@ -1,71 +1,135 @@
-{% extends "frontend/base.html" %}
+{% load static %}
+<!doctype html>
+<html class="h-100">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Chat</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
 
-{% block title %} Chat {% endblock %}
-{% block content %}
-    <div id="chat" style="width:70%; max-height: 600px;">
-        {{ room_name|json_script:"room-name" }}
-    </div>
-    {% load static %}
-{% endblock %}
+        <style>
+            .bd-placeholder-img {
+                font-size: 1.125rem;
+                text-anchor: middle;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                user-select: none;
+            }
 
-{% block script %}
-    const username = "{{request.user}}";
-    const roomName = JSON.parse(document.getElementById('room-name').textContent);
+            @media (min-width: 768px) {
+                .bd-placeholder-img-lg {
+                    font-size: 3.5rem;
+                }
+            }
+        </style>
 
-    const chatSocket = new WebSocket(
-        'ws://'
-        + window.location.host
-        + '/ws/chat/'
-        + roomName
-        + '/'
-    );
+        <link href="{% static "css.css" %}" rel="stylesheet">    
+    </head>
+    <body>
+        <div class="cover-container d-flex justify-content-center align-items-center w-100 h-100 p-3 mx-auto flex-column text-white">
+                <h1 class="display-1">{{room_name}}</h1><br>
+                    <div class="cover-container w-100 h-100">
+                        <div class="album">
+                            <div id="chat"></div>
+                            <input id="input_mess" type="text" class="form-control" placeholder="Message..." aria-label="Message" aria-describedby="basic-addon1">
+                        </div>
+                    </div>
+            </div>
+        </div>       
+        <script>
+            const username = "test2";
+            const roomName = "{{room_name}}";
+            document.getElementById("chat").style.maxHeight = window.innerHeight * 0.7 + 'px';
 
+            const chatSocket = new WebSocket(
+                'ws://'
+                + window.location.host
+                + '/ws/chat/'
+                + roomName
+                + '/'
+            );
 
-    chatSocket.onmessage = function(e) {
-        const data = JSON.parse(e.data);
-        const message = data.message;
-        const author = data.author;
+            chatSocket.onopen = function(e) {
+                chatSocket.send(JSON.stringify({
+                        'type': 'chat_join',
+                        'nick': 'test123'
+                        }));
+            }
 
-        var div = document.createElement('div');
-        var div_message = document.createElement('div');
-        div_message.textContent = message;
+            chatSocket.onmessage = function(e) {
+                const data = JSON.parse(e.data);
+                const type = data.type;
 
-        if (username === author)
-        {
-            div.className = 'd-flex justify-content-end mb-3 m-2';
-            div_message.className = 'send_message';
-        } else
-        {
-            div.className = 'd-flex justify-content-start mb-3 m-2';
-            div_message.className = 'receive_message';
-        }
+                if (type === 'chat_message')
+                {
+                    const message = data.message;
+                    const author = data.author;
 
-        div.appendChild(div_message);
-        var main_div = document.querySelector('#chat-log');
-        main_div.appendChild(div);
-        main_div.scrollTop =  main_div.scrollHeight;
+                    var div_main = document.createElement('div');
+                    div_main.className = 'd-flex flex-column';
 
-    };
+                    var div = document.createElement('div');
+                    var div_message = document.createElement('div');
+                    div_message.textContent = message;
 
-    chatSocket.onclose = function(e) {
-        console.error('Chat socket closed unexpectedly');
-    };
+                    div_p = document.createElement('div');
+                    var p = document.createElement('span');
+                    p.className = "font-weight-bold mx-3";
+                    p.textContent = author;
 
-    document.querySelector('#chat-message-input').focus();
-    document.querySelector('#chat-message-input').onkeyup = function(e) {
-        if (e.keyCode === 13) {  // enter, return
-            document.querySelector('#chat-message-submit').click();
-        }
-    };
+                    if (username === author)
+                    {
+                        div_p.className = 'd-flex justify-content-end';
+                        div.className = 'd-flex justify-content-end mb-3';
+                        div_message.className = 'send_message';
+                    } else
+                    {
+                        div_p.className = 'd-flex justify-content-start';
+                        div.className = 'd-flex justify-content-start mb-3';
+                        div_message.className = 'receive_message';
+                    }
+                    div_p.appendChild(p);
+                    div.appendChild(div_message);
+                    div_main.appendChild(div_p);
+                    div_main.appendChild(div);
+                    var chat_div = document.getElementById('chat');
+                    chat_div.appendChild(div_main);                   
+                }
 
-    document.querySelector('#chat-message-submit').onclick = function(e) {
-        const messageInputDom = document.querySelector('#chat-message-input');
-        const message = messageInputDom.value;
-        chatSocket.send(JSON.stringify({
-            'message': message,
-            'author': username
-        }));
-        messageInputDom.value = '';
-    };
+                if (type === 'chat_join')
+                {
+                    var p = document.createElement('p');
+                    p.className = "text-center text-muted";
+                    p.textContent = data.nick + ' join the chat!';
+                    var chat_div = document.getElementById('chat');
+                    chat_div.appendChild(p); 
+                }
 
-{% endblock %}
+                chat_div.scrollTop =  chat_div.scrollHeight;
+            };
+
+            chatSocket.onclose = function(e) {
+                console.error('Chat socket closed unexpectedly');
+            };
+
+            document.querySelector('#input_mess').focus();
+            document.querySelector('#input_mess').onkeyup = function(e) {
+                if (e.keyCode === 13) { 
+                    const messageInputDom = document.querySelector('#input_mess');
+                    const message = messageInputDom.value;
+                    if (message != '')
+                    {
+                        chatSocket.send(JSON.stringify({
+                        'type': 'chat_message',
+                        'message': message,
+                        'author': username
+                        }));
+                        messageInputDom.value = '';
+                    }
+                }
+            };
+
+        </script>
+
+    </body>
+</html>

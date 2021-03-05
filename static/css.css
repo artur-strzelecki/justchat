@@ -1,23 +1,24 @@
 .send_message {
     margin-right: 10px;
-    border-radius: 22px;
+    border-radius: 15px;
     background-color: #78e08f;
     padding: 12px;
     word-wrap: break-word;
-    max-width: 30%;
+    max-width: 70%;
 }
 
 .receive_message {
     margin-left: 10px;
-    border-radius: 22px;
+    border-radius: 15px;
     background-color: #82ccdd;
     padding: 12px;
     word-wrap: break-word;
-    max-width: 30%;
+    max-width: 70%;
 }
 
 body {
     background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(47,40,43,1) 0%, rgba(71,90,94,1) 100%);
+    overflow: hidden;
 }
 
 .cover-container {
@@ -29,9 +30,33 @@ body {
     box-shadow: 0 0 0 0.2rem rgba(223, 228, 234, 0.25);
 }
 
+#input_mess:focus {
+    border-color: #4b4d50;
+    box-shadow: 0 0 0 0.2rem rgba(223, 228, 234, 0.25);
+}
+
 #nickname {
     max-width: 18em;
     align-self: center;
 }
 
+a {
+    cursor: pointer;
+}
+
+#chat {
+    border-radius: 5px;
+    border: 2px;
+    border-color: #4b4d50;
+    overflow-y: scroll; 
+    min-width: 18em;
+    max-width: auto;
+    min-height: auto;
+    -ms-overflow-style: none;  
+    scrollbar-width: none; 
+}
+
+#chat::-webkit-scrollbar {
+    display: none;
+  }
 

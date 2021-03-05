@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import SerializersPublicMessage, SerializersRoom
@@ -33,13 +33,14 @@ def get_rooms(request):
 
 
 def rooms_view(request):
-    return render(request, 'chat/rooms.html')
+    rooms = Room.objects.all()
+    return render(request, 'chat/rooms.html', {'rooms': rooms})
 
 
 def chat_view(request, room_name):
     room_obj = get_object_or_404(Room, name=room_name)
 
-    return render(request, 'chat/chat.html')
+    return render(request, 'chat/chat.html', {'room_name': room_name})
 
 def main_view(request):
     return redirect('rooms')

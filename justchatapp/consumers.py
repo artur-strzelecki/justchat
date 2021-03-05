@@ -12,9 +12,9 @@ class ChatConsumer(WebsocketConsumer):
 
         for message in messages:
             self.send(text_data=json.dumps({
+                'type': 'chat_message',
                 'message': message.content,
                 'author': message.author,
-                'id': message.id,
             }))
 
     def connect(self):
@@ -41,33 +41,51 @@ class ChatConsumer(WebsocketConsumer):
     # receive message from user
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        message = text_data_json['message']
-        author = text_data_json['author']
+        type = text_data_json['type']
 
-        public_message = PublicMessage.objects.create(author=author, content=message, room=self.room)
-        mess_id = public_message.id
-        public_message.save()
+        if type == 'chat_message':
+            message = text_data_json['message']
+            author = text_data_json['author']
+            public_message = PublicMessage.objects.create(author=author, content=message, room=self.room)
+            mess_id = public_message.id
+            public_message.save()
 
-        async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name,
-            {
-                'type': 'chat_message',
-                'message': message,
-                'author': author,
-                'id': mess_id,
-            }
-        )
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type': 'chat_message',
+                    'message': message,
+                    'author': author,
+                }
+            )
+
+        if type == 'chat_join':
+            nick = text_data_json['nick']
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type': 'chat_join',
+                    'nick': nick,
+                }
+            )           
+        
 
     # send message to textarea in template
     def chat_message(self, event):
         message = event['message']
         author = event['author']
-        mess_id = event['id']
 
         self.send(text_data=json.dumps({
+            'type': 'chat_message',
             'message': message,
             'author': author,
-            'id': mess_id,
         }))
+
+    def chat_join(self, event):
+        nick = event['nick']
+        self.send(text_data=json.dumps({
+            'type': 'chat_join',
+            'nick': nick
+        }))       
 
 
